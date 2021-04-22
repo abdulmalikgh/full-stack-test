@@ -1,15 +1,15 @@
 const Providers = require('../models/providers')
 
-const {success, error } = require('../response/serverResponse')
+const { success, error } = require('../response/serverResponse')
 
 class ProviderController {
 
-    async getProvider(){
+    async getProvider(req, res){
 
         try {
             
-            const providers = Providers.find({})
-
+            const providers = await Providers.find().select('name')
+          
             if( providers ) {
 
                 const successData = {
@@ -17,14 +17,13 @@ class ProviderController {
                     success: true,
 
                     providers: providers
-                    
+
                 }
 
                 success(req, res, successData)
             }
 
         } catch (error) {
-           
             error(req, res, error = {
 
                 success: false,
@@ -42,7 +41,7 @@ class ProviderController {
         try {
 
             const {id, name } = req.body
-
+           
             const provider = await Providers.findOne({id:id})
 
             if(provider) {
@@ -58,17 +57,19 @@ class ProviderController {
                 return 
             }
 
-            const provider = Providers.create({
+            const newProvider = await Providers.create({
                 id: id,
-                name:name
+                name: name
             })
-            if(provider) {
+            
+            console.log('providers', newProvider)
+            if(newProvider) {
 
                 const successData = {
 
                     success: true,
 
-                    providers: providers
+                    provider: newProvider
 
                 }
 
@@ -78,7 +79,7 @@ class ProviderController {
 
             
         } catch (error) {
-            
+           
             error(req, res, error = {
 
                 success: false,
