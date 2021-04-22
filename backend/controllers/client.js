@@ -38,8 +38,37 @@ class ClientController {
         }
     }
 
-    async getClient() {
+    async getClient(req, res) {
 
+        try {
+
+            const clients = await Clients.find()
+
+            if( clients ) {
+
+                const successData = {
+
+                    success: true,
+
+                    clients: clients
+
+                }
+
+                success(req, res, successData)
+
+            }
+            
+        } catch (err) {
+
+            error(req, res, error = {
+
+                success: false,
+
+                message: error
+
+            })
+
+        }
     }
 
     async deleteClient() {
