@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const {isEmail} = require('validator')
 
 const clientSchema = ({
+    id: mongoose.ObjectId,
     name: {
         type:String,
         required:[true, 'Name is required']
@@ -15,9 +16,9 @@ const clientSchema = ({
         type:String,
         required:[true, "Phone number is required"]
     },
-    providers: [{
-        id:Number
-    }]
+    providers: [
+     {type: mongoose.Schema.Types.ObjectId, ref:'Providers', required: true,},
+    ]
 })
 
 module.exports = mongoose.model('Client', clientSchema)

@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 
 const providersSchema = mongoose.Schema({
-    id: {
-        type:String,
-        required:true,
+    id:{
+        type: Number,
+        required: true
     },
     name: {
         type: String,
-        require: true
+        required: true
     }
 })
 

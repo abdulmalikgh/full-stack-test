@@ -13,13 +13,14 @@ class ClientController {
 
             if(client) {
 
+                const clientData = await Clients.findOne({_id: client._id}).select("name email phone providers").populate('providers')
                 const successData = {
 
                     success: true,
 
                     message: 'client created',
 
-                    client: client
+                    client: clientData
 
                 }
 
@@ -44,7 +45,7 @@ class ClientController {
 
         try {
 
-            const clients = await Clients.find()
+            const clients = await Clients.find().select("name email phone providers").populate('providers')
 
             if( clients ) {
 
@@ -63,7 +64,7 @@ class ClientController {
             }
             
         } catch (err) {
-
+            console.log(err)
             error(req, res, error = {
 
                 success: false,

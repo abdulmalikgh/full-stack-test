@@ -8,7 +8,7 @@ class ProviderController {
 
         try {
             
-            const providers = await Providers.find().select('name')
+            const providers = await Providers.find().select('name id')
           
             if( providers ) {
 

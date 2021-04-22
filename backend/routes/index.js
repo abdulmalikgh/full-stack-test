@@ -6,7 +6,7 @@ const providerRoute = require('./providers')
 
 const clientRouter = require('./client')
 
-app.use('/provider', providerRoute )
+app.use('/providers', providerRoute )
 
 app.use('/clients', clientRouter)
 
