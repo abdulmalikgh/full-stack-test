@@ -1,6 +1,6 @@
 const Clients = require('../models/clients')
 
-const { success, error } = require('../response/serverResponse')
+let { success, error } = require('../response/serverResponse')
 
 class ClientController {
 
@@ -17,11 +17,13 @@ class ClientController {
 
                     success: true,
 
+                    message: 'client created',
+
                     client: client
 
                 }
 
-                success(req, res, successData)
+                success(req, res, successData, 201)
 
             }
 
@@ -31,7 +33,7 @@ class ClientController {
 
                 success: false,
 
-                message: error
+                message: err
 
             })
 
@@ -50,6 +52,8 @@ class ClientController {
 
                     success: true,
 
+                    message: 'Retrieved clients',
+
                     clients: clients
 
                 }
@@ -64,19 +68,87 @@ class ClientController {
 
                 success: false,
 
-                message: error
+                message: err
 
             })
 
         }
     }
 
-    async deleteClient() {
+    async deleteClient(req, res) {
 
+        try {
+
+          let client = await Clients.findOneAndDelete({_id: req.params.id})
+         
+
+          if(client) {
+
+            success(req, res, {success:true, message: "Client deleted successfully"})
+
+          } 
+
+          if(client === null) {
+            error(req, res, error = {
+
+                success: false,
+
+                message: "Invalid client ID"
+
+            }, 400)
+          }
+            
+        } catch (err) {
+          
+            error(req, res, error = {
+
+                success: false,
+
+                message: err
+
+            })
+            
+        }
     }
 
-    async updateClient() {
+    async updateClient(req, res) {
 
+        try {
+
+            const updateClient = await Clients.findOneAndUpdate({_id: req.params.id},{
+                email:req.body.email,
+                name:req.body.name,
+                phone:req.body.phone,
+                providers:req.body.providers
+            })
+
+            if(updateClient) {
+                const updatedClient = await Clients.findOne({_id: req.params.id})
+                const successData = {
+
+                    success: true,
+
+                    message: 'Client Updated',
+
+                    client: updatedClient
+
+                }
+                success(req, res, successData)
+            }
+            
+
+        } catch (err) {
+            console.log('erroro', err)
+
+            error(req, res, error = {
+
+                success: false,
+
+                message: err
+
+            })
+
+        }
     }
 }
 

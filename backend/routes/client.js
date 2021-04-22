@@ -10,8 +10,8 @@ router.get('/', Client_Controller.getClient)
 
 router.post('/', Client_Controller.createClient)
 
-router.delete('/', Client_Controller.deleteClient)
+router.delete('/:id', Client_Controller.deleteClient)
 
-router.patch('/', Client_Controller.updateClient)
+router.patch('/:id', Client_Controller.updateClient)
 
 module.exports = router
