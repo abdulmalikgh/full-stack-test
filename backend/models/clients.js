@@ -12,13 +12,12 @@ const clientSchema = ({
         validate: [isEmail, 'Enter a valid email']
     },
     phone: {
-        type:Number,
+        type:String,
         required:[true, "Phone number is required"]
     },
-    providers: {
-        type:Array,
-        required: [true, "Providers is required"]
-    }
+    providers: [{
+        id:Number
+    }]
 })
 
 module.exports = mongoose.model('Client', clientSchema)
