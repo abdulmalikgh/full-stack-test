@@ -2,13 +2,15 @@ const express = require('express')
 
 const clientRoute = require('./client')
 
+const { clientValidation } = require('../validators/client')
+
 const Client_Controller = require('../controllers/client')
 
 const router = express.Router()
 
 router.get('/', Client_Controller.getClient)
 
-router.post('/', Client_Controller.createClient)
+router.post('/', clientValidation(), Client_Controller.createClient)
 
 router.delete('/:id', Client_Controller.deleteClient)
 

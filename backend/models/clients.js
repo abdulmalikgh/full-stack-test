@@ -2,19 +2,18 @@ const mongoose = require('mongoose')
 const {isEmail} = require('validator')
 
 const clientSchema = ({
-    id: mongoose.ObjectId,
     name: {
         type:String,
-        required:[true, 'Name is required']
+        required:true
     },
     email: {
         type: String,
-        required: [true, "Email is required"],
-        validate: [isEmail, 'Enter a valid email']
+        required: true,
+        unique:true
     },
     phone: {
         type:String,
-        required:[true, "Phone number is required"]
+        required:true
     },
     providers: [
      {type: mongoose.Schema.Types.ObjectId, ref:'Providers', required: true,},

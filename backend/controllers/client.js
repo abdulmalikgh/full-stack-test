@@ -2,18 +2,43 @@ const Clients = require('../models/clients')
 
 let { success, error } = require('../response/serverResponse')
 
+const { validationResult } = require('express-validator')
+
+const { resultsValidator } = require('../validators/client')
+
 class ClientController {
 
     async createClient(req, res) {
     
         try {
             
+            const errors = resultsValidator(req)
+                if (errors.length > 0) {
+                    return res.status(400).json({
+                    method: req.method,
+                    status: res.statusCode,
+                    error: errors
+                    })
+                }
 
+            const checkClient = await Clients.findOne({email: req.body.email})
+    
+            if(checkClient) {
+                return error(req, res, {
+
+                    success: false,
+    
+                    message: "User already exist"
+    
+                }, 400)
+            }
+           
             const client = await Clients.create(req.body)
 
             if(client) {
 
                 const clientData = await Clients.findOne({_id: client._id}).select("name email phone providers").populate('providers')
+                
                 const successData = {
 
                     success: true,
@@ -29,7 +54,6 @@ class ClientController {
             }
 
         } catch (err) {
-            
             error(req, res, error = {
 
                 success: false,
@@ -94,13 +118,23 @@ class ClientController {
 
                 success: false,
 
-                message: "Invalid client ID"
+                message: "id not found"
 
-            }, 400)
+            }, 404)
           }
             
         } catch (err) {
-          
+
+            if(err.path == "_id") {
+                return error(req, res, error = {
+
+                    success: false,
+    
+                    message: "id not found"
+    
+                }, 404)
+            }
+
             error(req, res, error = {
 
                 success: false,
@@ -115,6 +149,15 @@ class ClientController {
     async updateClient(req, res) {
 
         try {
+            
+            const errors = resultsValidator(req)
+                if (errors.length > 0) {
+                    return res.status(400).json({
+                    method: req.method,
+                    status: res.statusCode,
+                    error: errors
+                    })
+            }
 
             const updateClient = await Clients.findOneAndUpdate({_id: req.params.id},{
                 email:req.body.email,
@@ -139,6 +182,16 @@ class ClientController {
             
 
         } catch (err) {
+            console.log('err', err  )
+            if(err.path === "_id") {
+                return error(req, res, error = {
+
+                    success: false,
+    
+                    message: "id not found"
+    
+                }, 404)
+            }
 
             error(req, res, error = {
 
