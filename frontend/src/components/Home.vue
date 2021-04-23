@@ -81,7 +81,121 @@
                 </el-table>
             </div>
        </div>
-       <!-- modal contents -->
+         <!-- modal contents -->
+       <!-- ADD NEW CUSTOMER -->
+       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ title }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" @submit.prevent="addClient">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input id="name" class="form-control" type="text" v-model="form.name" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" v-model="form.email" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input class="form-control" id="phone" type="text" v-model="form.phone" required />
+                        </div>
+                        <div class="form-group">
+                            <label id="providers" class="typo__label">Providers</label>
+                                <multiselect
+                                    v-model="form.providers" 
+                                    tag-placeholder="Add this as new provider" 
+                                    placeholder="Search or add a provider" 
+                                    label="name" 
+                                    track-by="_id"
+                                    id="providers"
+                                    :options="providers" 
+                                    :multiple="true" 
+                                    :taggable="true"
+                                    :required="true"
+                                    :allowEmpty="false"
+                                    ></multiselect>
+                                    <p class="text-danger" v-if="providerError">
+                                        Select at least one provider
+                                    </p>
+                        </div>
+                        <p v-if="error" class="alert alert-danger py-2"> {{error}}</p>
+                        <p class="alert alert-success py-2" v-if="success">{{success}}</p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button  type="submit"  class="btn btn-primary">
+                                <span v-if="isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                Add Client
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+                <!-- UPDATE FORM -->
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ title }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" @submit.prevent="updateClient">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input id="name" class="form-control" type="text" v-model="form.name" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" v-model="form.email" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input class="form-control" id="phone" type="text" v-model="form.phone" required />
+                        </div>
+                        <div class="form-group">
+                            <label id="providers" class="typo__label">Providers</label>
+                                <multiselect
+                                    v-model="form.providers" 
+                                    tag-placeholder="Add this as new provider" 
+                                    placeholder="Search or add a provider" 
+                                    label="name" 
+                                    track-by="_id"
+                                    id="providers"
+                                    :options="providers" 
+                                    :multiple="true" 
+                                    :taggable="true"
+                                    :required="true"
+                                    :allowEmpty="false"
+                                    ></multiselect>
+                                    <p class="text-danger" v-if="providerError">
+                                        Select at least one provider
+                                    </p>
+                        </div>
+                        <p v-if="error" class="alert alert-danger py-2"> {{error}}</p>
+                        <p class="alert alert-success py-2" v-if="success">{{success}}</p>
+                        <div class="modal-footer">
+                            <button @click="closeUpdate" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button  type="submit"  class="btn btn-primary">
+                                <span v-if="isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                Save Client
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
      
    </div>
 </template>
@@ -126,7 +240,51 @@ export default {
         this.$store.dispatch('fetchClients')
     },
     methods: {
-      
+       updateClient() {
+             this.success = ''
+             this.error = ''
+
+            const newProvider = []
+            if(this.form.providers && this.form.providers.length < 1) {
+                this.providerError = true
+                return
+            }
+
+            this.isLoading = true
+
+            this.form.providerError = false
+            this.form.providers.forEach( provider => newProvider.push(provider._id))
+            let formData = {
+                name: this.form.name,
+                email: this.form.email,
+                phone: this.form.phone,
+                providers: newProvider
+            }
+
+            const data = {
+                data:formData,
+                key: this.key,
+                id:this.id
+            }
+             this.$store.dispatch('updateClient', data).then( response => {
+               if(response) {
+                    this.success = "Client updated successfully"
+                    this.isLoading = false
+                }
+             }).catch (err =>{
+                console.log(err)
+                if(err?.response?.data == undefined) {
+                    this.error = "Network error"
+                    this.isLoading = false
+                }
+            })
+
+         },
+         closeUpdate(){
+             this.form = {
+
+             }
+         },
          addClient() {
             this.success = ''
             this.error = ''
