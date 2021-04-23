@@ -27,11 +27,12 @@ export default new Vuex.Store({
       state.clients.splice(key, 1)
     },
     UPDATE_CLIENT(state, {key:key, client:client}){
-      let stateClient = state.clients.find( client => client.email == client.email) 
-      stateClient.name = client.name
-      stateClient.email = client.email
-      stateClient.providers = client.providers
-      stateClient.phone = client.phone
+      // let stateClient = state.clients.find( client => client.email == client.email) 
+      // stateClient.name = client.name
+      // stateClient.email = client.email
+      // stateClient.providers = client.providers
+      // stateClient.phone = client.phone
+      state.clients[key] = client
     }
   },
   actions: {
