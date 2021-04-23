@@ -139,7 +139,7 @@
                 </div>
             </div>
         </div>
-                <!-- UPDATE FORM -->
+        <!-- UPDATE FORM -->
         <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -196,7 +196,30 @@
                 </div>
             </div>
         </div>
-     
+        <!-- DELETE CLIENT -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Client</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <p v-if="!deleteSuccess" class="alert alert-warning">Are you sure you want to delete this client.This action is irreversible.</p>
+                        <p v-if="deleteError" class="alert alert-danger py-2"> {{deleteError}}</p>
+                        <p class="alert alert-success py-2" v-if="deleteSuccess">{{deleteSuccess}}</p>
+                        <div class="modal-footer">
+                            <button v-if="!deleteSuccess" type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                            <button v-if="deleteSuccess" type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button v-if="!deleteSuccess" type="button" @click="deleteClient"  class="btn btn-danger">
+                                <span v-if="isLoading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Yes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
    </div>
 </template>
 
@@ -240,6 +263,53 @@ export default {
         this.$store.dispatch('fetchClients')
     },
     methods: {
+        setPage (val) {
+            this.page = val
+        },
+        createNewClient(){
+            this.title = "New Client"
+            this.success = ''
+            this.error = ''
+            this.isNew = true
+            this.form = {}
+        },
+        handleDelete(index, id) {
+            this.id = id
+            this.key = index
+            this.deleteSuccess = ''
+            this.deleteError = ''
+        },
+        handleEdit(index, data) {
+            this.key = index
+            this.success = ''
+            this.error = ''
+            this.title = 'Edit Client'
+            this.isNew = false
+            this.id = data._id
+            // update form
+            this.form.name = data.name
+            this.form.email = data.email
+            this.form.phone = data.phone
+            this.form.providers = data.providers
+        },
+         deleteClient() {
+            this.isLoading = true
+            const data = {
+                key:this.key,
+                id:this.id
+            }
+            this.$store.dispatch('deleteClient', data).then( response => {
+                if(response) {
+                    this.isLoading = false
+                    this.deleteSuccess = "Client delete success"
+                }
+            }).catch( err => {
+                this.isLoading = false
+                if(err) {
+                    this.deleteError = "An error occured."
+                }
+            })
+         },
        updateClient() {
              this.success = ''
              this.error = ''
