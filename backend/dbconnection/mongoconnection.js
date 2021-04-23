@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
-require('dotenv').config({
-    path: './config/config.env',
-})
+require('dotenv').config()
 
 class MongooseConnection{
     constructor(db_url){

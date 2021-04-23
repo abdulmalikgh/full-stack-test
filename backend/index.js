@@ -10,9 +10,7 @@ const cors = require('cors')
 
 const morgan = require('morgan')
 
-require('dotenv').config({
-    path:'./config/config.env'
-})
+require('dotenv').config()
 
 dbConnection.connection()
 

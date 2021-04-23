@@ -182,7 +182,6 @@ class ClientController {
             
 
         } catch (err) {
-            console.log('err', err  )
             if(err.path === "_id") {
                 return error(req, res, error = {
 
