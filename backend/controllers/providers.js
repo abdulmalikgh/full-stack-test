@@ -1,6 +1,8 @@
 const Providers = require('../models/providers')
 
-const { success, error } = require('../response/serverResponse')
+const providerValidation = require('../validators/provider')
+
+let { success, error } = require('../response/serverResponse')
 
 class ProviderController {
 
@@ -23,12 +25,12 @@ class ProviderController {
                 success(req, res, successData)
             }
 
-        } catch (error) {
+        } catch (err) {
             error(req, res, error = {
 
                 success: false,
 
-                message: error
+                message: err
 
             })
 
@@ -40,29 +42,28 @@ class ProviderController {
         
         try {
 
-            const {id, name } = req.body
+            let { id, name } = req.body
            
-            const provider = await Providers.findOne({id:id})
-
+            let provider = await Providers.findOne({id:id})
+            console.log('provider', provider)
             if(provider) {
 
-                error(req, res, error = {
+                error(req, res, {
 
                     success: false,
 
                     message: "Provider already exist"
 
-                })
+                }, 400)
 
                 return 
             }
 
-            const newProvider = await Providers.create({
+            let newProvider = await Providers.create({
                 id: id,
                 name: name
             })
             
-            console.log('providers', newProvider)
             if(newProvider) {
 
                 const successData = {
@@ -78,13 +79,15 @@ class ProviderController {
             }
 
             
-        } catch (error) {
-           
-            error(req, res, error = {
+        } catch (err) {
+            console.log('erro', err)
+
+            let errors = providerValidation(err)
+            error(req, res,  {
 
                 success: false,
 
-                message: error
+                errors: errors
 
             })
 

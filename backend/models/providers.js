@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 
 const providersSchema = mongoose.Schema({
-    id:{
+    id: {
         type: Number,
-        required: true
+        required: [true,'ID field is required']
     },
     name: {
         type: String,
-        required: true
+        required:[ true,"Name field is required" ]
     }
 })
 
