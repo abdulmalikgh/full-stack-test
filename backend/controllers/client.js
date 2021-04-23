@@ -124,7 +124,7 @@ class ClientController {
             })
 
             if(updateClient) {
-                const updatedClient = await Clients.findOne({_id: req.params.id})
+                const updatedClient = await Clients.findOne({_id: req.params.id}).select("name email phone providers").populate('providers')
                 const successData = {
 
                     success: true,
@@ -139,7 +139,6 @@ class ClientController {
             
 
         } catch (err) {
-            console.log('erroro', err)
 
             error(req, res, error = {
 
