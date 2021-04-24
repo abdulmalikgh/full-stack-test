@@ -30,7 +30,7 @@ class ClientController {
     
                     message: "User already exist"
     
-                }, 400)
+                }, 409)
             }
            
             const client = await Clients.create(req.body)
@@ -88,7 +88,6 @@ class ClientController {
             }
             
         } catch (err) {
-            console.log(err)
             error(req, res, error = {
 
                 success: false,
@@ -118,9 +117,9 @@ class ClientController {
 
                 success: false,
 
-                message: "id not found"
+                message: "Invalid ID"
 
-            }, 404)
+            }, 400)
           }
             
         } catch (err) {

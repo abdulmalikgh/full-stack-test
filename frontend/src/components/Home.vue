@@ -11,11 +11,7 @@
                     :data="clients.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
                     border stripe
                     style="width: 100%"
-                     :default-sort = "[
-                     {prop: 'name', order: 'descending'},
-                     {prop: 'email', order: 'descending'},
-                     {prop: 'phone', order: 'descending'},
-                     {prop: 'providers', order: 'descending'}]">
+                     :default-sort = "{prop: 'name', order: 'descending'}">
                    
                     <el-table-column
                     label="Name"
