@@ -12,18 +12,21 @@ MONGODB_URI
 ### Running app
 ```
 Run the following commands to start the up
-cd backend and run npm start   
+cd backend and npm run start   
 cd frontend and npm run serve 
  1. Open your web browser and type http://localhost:8081/ to see the application
  2. Open your web browser and type http://localhost:800/api-docs/ to see the APIs documentation with swagger for all the endpoints
 ```
+
 ### For production
-    ``
-    npm run build
-    ```
+```
+npm run build
+```
+
 ### Lints and Bug fixes 
-    ```
-    npm run lint
-    ```
+```
+npm run lint
+```
+
 ### Advanced configuration
 visit [Configuration Reference](https://cli.vuejs.org/config/).
