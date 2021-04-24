@@ -6,7 +6,7 @@ let { success, error } = require('../response/serverResponse')
 
 class ProviderController {
 
-    async getProvider(req, res){
+    async getProviders(req, res){
 
         try {
             
@@ -38,7 +38,7 @@ class ProviderController {
 
     }
 
-    async postProviders(req, res) {
+    async postProvider(req, res) {
         
         try {
 
@@ -197,14 +197,12 @@ class ProviderController {
     }
 
     async updateProvider(req, res) {
-
+        console.log(req.body)
         try {
-            const updateProvider = await Providers.findOneAndUpdate({_id: req.params.id},{
-                id:req.body.id,
-            })
+            const updateProvider = await Providers.findOneAndUpdate({_id: req.params.id},req.body)
 
             if(updateProvider) {
-                const updatedProvider = await Providers.findOne({_id: req.params.id}).select("name email phone providers").populate('providers')
+                const updatedProvider = await Providers.findOne({_id: req.params.id})
                 const successData = {
 
                     success: true,
