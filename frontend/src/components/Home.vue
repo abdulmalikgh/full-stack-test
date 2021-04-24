@@ -1,6 +1,15 @@
 <template>
    <div class="container-fluid">
-       <div class="row py-3 justify-content-center">
+        <div class="row justify-content-center" >
+            <div class="col-md-10 my-5" v-if="loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+       <div class="row py-3 justify-content-center" v-if="!loading">
            <div class="col-md-10 py-4">
                 <h2>Clients
                     <button @click="createNewClient" type="primary" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="float:right">New Client</button>
@@ -44,7 +53,9 @@
                         label="Providers"
                         width="296" sortable>
                         <template slot-scope="scope">
-                            <span style="" v-for="(provider, key) in scope.row.providers" :key="key">{{ provider.name }} {{", "}}</span>
+                            <span style="" v-for="(provider, key) in scope.row.providers" :key="key">
+                                {{ provider.name }} {{ scope.row.providers && scope.row.providers.length > 1 ? ", " : "" }}
+                            </span>
                         </template>
                     </el-table-column>
                     
@@ -228,6 +239,7 @@ export default {
     components: { Multiselect },
     data() {
         return {
+            loading: false,
             search:'',
              page: 1,
             pageSize: 10,
@@ -255,10 +267,16 @@ export default {
         ...mapGetters(['clients', 'providers']),
     },
     mounted() {
-        this.$store.dispatch('fetchProviders')
-        this.$store.dispatch('fetchClients')
+        this.fetchData()
+       
     },
     methods: {
+        async fetchData() {
+            this.loading = true
+            const providers = await this.$store.dispatch('fetchProviders')
+            const clients = await  this.$store.dispatch('fetchClients')
+            this.loading = false
+        },
         setPage (val) {
             this.page = val
         },
@@ -301,8 +319,13 @@ export default {
                 }
             }).catch( err => {
                 this.isLoading = false
-                if(err) {
-                    this.deleteError = "An error occured."
+                 if(err) {
+                   this.deleteError = err.response.data.error.message
+                   this.isLoading = false
+                }
+                if(err?.response?.data == undefined) {
+                   this.deleteError = "Network error"
+                    this.isLoading = false
                 }
             })
          },
@@ -338,7 +361,10 @@ export default {
                     this.isLoading = false
                 }
              }).catch (err =>{
-                console.log(err)
+                     if(err) {
+                   this.error = err.response.data.error.message
+                   this.isLoading = false
+                }
                 if(err?.response?.data == undefined) {
                     this.error = "Network error"
                     this.isLoading = false
@@ -381,8 +407,11 @@ export default {
 
                     }
                 }
-             }).catch (err =>{
-                console.log(err)
+             }).catch (err =>{  
+                if(err) {
+                   this.error = err.response.data.error.message
+                   this.isLoading = false
+                }
                 if(err?.response?.data == undefined) {
                     this.error = "Network error"
                     this.isLoading = false
