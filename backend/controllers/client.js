@@ -65,7 +65,7 @@ class ClientController {
         }
     }
 
-    async getClient(req, res) {
+    async getClients(req, res) {
 
         try {
 
@@ -99,6 +99,62 @@ class ClientController {
         }
     }
 
+    async getClient(req, res) {
+
+        try {
+
+          let client = await Clients.findOne({_id: req.params.id}).select("name email phone providers").populate('providers')
+         
+
+          if(client) {
+
+            const successData = {
+
+                success: true,
+
+                message: 'Retrieved client',
+
+                client: client
+
+            }
+
+            success(req, res, successData)
+
+          } 
+
+          if(client === null) {
+            error(req, res, error = {
+
+                success: false,
+
+                message: "id not found"
+
+            }, 404)
+          }
+            
+        } catch (err) {
+            console.log('error', err)
+            if(err.path == "_id") {
+                return error(req, res, error = {
+
+                    success: false,
+    
+                    message: "Invalid ID"
+    
+                }, 400)
+            }
+
+            error(req, res, error = {
+
+                success: false,
+
+                message: err
+
+            })
+            
+        }
+    }
+
     async deleteClient(req, res) {
 
         try {
@@ -117,9 +173,9 @@ class ClientController {
 
                 success: false,
 
-                message: "Invalid ID"
+                message: "id not found"
 
-            }, 400)
+            }, 404)
           }
             
         } catch (err) {
@@ -129,9 +185,9 @@ class ClientController {
 
                     success: false,
     
-                    message: "id not found"
+                    message: "Invalid ID"
     
-                }, 404)
+                }, 400)
             }
 
             error(req, res, error = {

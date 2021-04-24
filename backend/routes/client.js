@@ -8,9 +8,11 @@ const Client_Controller = require('../controllers/client')
 
 const router = express.Router()
 
-router.get('/', Client_Controller.getClient)
+router.get('/', Client_Controller.getClients)
 
 router.post('/', clientValidation(), Client_Controller.createClient)
+
+router.get('/:id', Client_Controller.getClient)
 
 router.delete('/:id', Client_Controller.deleteClient)
 
