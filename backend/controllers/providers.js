@@ -38,7 +38,7 @@ class ProviderController {
 
     }
 
-    async postProvider(req, res) {
+    async postProviders(req, res) {
         
         try {
 
@@ -95,7 +95,153 @@ class ProviderController {
         
     }
 
+    async getProvider(req, res) {
+
+        try {
+
+          let provider = await Providers.findOne({_id: req.params.id})
+         
+
+          if(provider) {
+
+            const successData = {
+
+                success: true,
+
+                message: 'Retrieved provider',
+
+                provider: provider
+
+            }
+
+            success(req, res, successData)
+
+          } 
+
+          if(provider === null) {
+            error(req, res, error = {
+
+                success: false,
+
+                message: "id not found"
+
+            }, 404)
+          }
+            
+        } catch (err) {
+            if(err.path == "_id") {
+                return error(req, res, error = {
+
+                    success: false,
+    
+                    message: "Invalid ID"
+    
+                }, 400)
+            }
+
+            error(req, res, error = {
+
+                success: false,
+
+                message: err
+
+            })
+            
+        }
+    }
+
+    async deleteProvider(req, res) {
+
+        try {
+
+          let provider = await Providers.findOneAndDelete({_id: req.params.id})
+         
+
+          if(provider) {
+
+            success(req, res, {success:true, message: "Provider deleted successfully"})
+
+          } 
+
+          if(provider === null) {
+            error(req, res, error = {
+
+                success: false,
+
+                message: "id not found"
+
+            }, 404)
+          }
+            
+        } catch (err) {
+
+            if(err.path == "_id") {
+                return error(req, res, error = {
+
+                    success: false,
+    
+                    message: "Invalid ID"
+    
+                }, 400)
+            }
+
+            error(req, res, error = {
+
+                success: false,
+
+                message: err
+
+            })
+            
+        }
+    }
+
+    async updateProvider(req, res) {
+
+        try {
+            const updateProvider = await Providers.findOneAndUpdate({_id: req.params.id},{
+                id:req.body.id,
+            })
+
+            if(updateProvider) {
+                const updatedProvider = await Providers.findOne({_id: req.params.id}).select("name email phone providers").populate('providers')
+                const successData = {
+
+                    success: true,
+
+                    message: 'Provider Updated',
+
+                    provider: updatedProvider
+
+                }
+                success(req, res, successData)
+            }
+            
+
+        } catch (err) {
+            if(err.path === "_id") {
+                return error(req, res, error = {
+
+                    success: false,
+    
+                    message: "id not found"
+    
+                }, 404)
+            }
+
+            error(req, res, error = {
+
+                success: false,
+
+                message: err
+
+            })
+
+        }
+    }
+
 }
+
 
 const Provider_Controller = new ProviderController()
 
